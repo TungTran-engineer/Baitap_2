@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Plate Lookup</title>
+</head>
+<body style="text-align: center; font-family: Arial, sans-serif;">
+    <p>Hello, I'm a Node.js server for searching vehicle plate numbers!</p>
+
+    <select id="city-select">
+        <option value="">Select a city</option>
+        <option value="Hà Nội">Hà Nội</option>
+        <option value="Thái Nguyên">Thái Nguyên</option>
+        <option value="Phú Thọ">Phú Thọ</option>
+        <option value="Bắc Giang">Bắc Giang</option>
+        <option value="Hòa Bình">Hòa Bình</option>
+        <option value="Bắc Ninh">Bắc Ninh</option>
+        <option value="Hà Nam">Hà Nam</option>
+        <option value="Hải Dương">Hải Dương</option>
+        <option value="Hưng Yên">Hưng Yên</option>
+        <option value="Vĩnh Phúc">Vĩnh Phúc</option>
+        <option value="Quảng Ninh">Quảng Ninh</option>
+        <option value="Hải Phòng">Hải Phòng</option>
+        <option value="Nam Định">Nam Định</option>
+        <option value="Ninh Bình">Ninh Bình</option>
+        <option value="Thái Bình">Thái Bình</option>
+        <option value="Hà Giang">Hà Giang</option>
+        <option value="Cao Bằng">Cao Bằng</option>
+        <option value="Lào Cai">Lào Cai</option>
+        <option value="Bắc Cạn">Bắc Cạn</option>
+        <option value="Lạng Sơn">Lạng Sơn</option>
+        <option value="Tuyên Quang">Tuyên Quang</option>
+        <option value="Yên Bái">Yên Bái</option>
+        <option value="Điện Biên">Điện Biên</option>
+        <option value="Lai Châu">Lai Châu</option>
+        <option value="Sơn La">Sơn La</option>
+        <option value="Thanh Hóa">Thanh Hóa</option>
+        <option value="Nghệ An">Nghệ An</option>
+        <option value="Hà Tĩnh">Hà Tĩnh</option>
+        <option value="Quảng Bình">Quảng Bình</option>
+        <option value="Quảng Trị">Quảng Trị</option>
+        <option value="Thừa Thiên Huế">Thừa Thiên Huế</option>
+        <option value="Đà Nẵng">Đà Nẵng</option>
+        <option value="Quảng Nam">Quảng Nam</option>
+        <option value="Quảng Ngãi">Quảng Ngãi</option>
+        <option value="Bình Định">Bình Định</option>
+        <option value="Phú Yên">Phú Yên</option>
+        <option value="Khánh Hòa">Khánh Hòa</option>
+        <option value="Ninh Thuận">Ninh Thuận</option>
+        <option value="Bình Thuận">Bình Thuận</option>
+        <option value="Kon Tum">Kon Tum</option>
+        <option value="Gia Lai">Gia Lai</option>
+        <option value="Đắk Lắk">Đắk Lắk</option>
+        <option value="Đắk Nông">Đắk Nông</option>
+        <option value="Lâm Đồng">Lâm Đồng</option>
+        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+        <option value="Bình Phước">Bình Phước</option>
+        <option value="Bình Dương">Bình Dương</option>
+        <option value="Đồng Nai">Đồng Nai</option>
+        <option value="Tây Ninh">Tây Ninh</option>
+        <option value="Bà Rịa Vũng Tàu">Bà Rịa Vũng Tàu</option>
+        <option value="Cần Thơ">Cần Thơ</option>
+        <option value="Long An">Long An</option>
+        <option value="Đồng Tháp">Đồng Tháp</option>
+        <option value="Tiền Giang">Tiền Giang</option>
+        <option value="An Giang">An Giang</option>
+        <option value="Bến Tre">Bến Tre</option>
+        <option value="Vĩnh Long">Vĩnh Long</option>
+        <option value="Hậu Giang">Hậu Giang</option>
+        <option value="Kiên Giang">Kiên Giang</option>
+        <option value="Sóc Trăng">Sóc Trăng</option>
+        <option value="Bạc Liêu">Bạc Liêu</option>
+        <option value="Cà Mau">Cà Mau</option>
+    </select>
+    <button onclick="getPlateNumber()">Tra cứu</button>
+
+    <p id="result"></p>
+
+    <script>
+        // Lấy danh sách tỉnh thành từ server và hiển thị vào select khi tải trang
+        window.onload = function() {
+            fetch('/city')
+                .then(response => response.json())
+                .then(cityList => {
+                    const select = document.getElementById('city-select');
+                    cityList.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(err => console.error('Error fetching cities:', err));
+        };
+
+        // Gửi request để lấy biển số theo tỉnh thành đã chọn
+        function getPlateNumber() {
+            const city = document.getElementById('city-select').value;
+            if (!city) {
+                document.getElementById('result').textContent = 'Vui lòng chọn một tỉnh thành!';
+                return;
+            }
+
+            fetch(`/plates/${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.plate_no) {
+                        document.getElementById('result').textContent = `Biển số xe: ${data.plate_no}`;
+                    } else {
+                        document.getElementById('result').textContent = 'Không tìm thấy biển số!';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('result').textContent = 'Lỗi khi tra cứu!';
+                });
+        }
+    </script>
+</body>
+</html>
