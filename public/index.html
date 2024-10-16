@@ -78,7 +78,6 @@
     <p id="result"></p>
 
     <script>
-        // Lấy danh sách tỉnh thành từ server và hiển thị vào select khi tải trang
         window.onload = function() {
             fetch('/city')
                 .then(response => response.json())
@@ -94,7 +93,6 @@
                 .catch(err => console.error('Error fetching cities:', err));
         };
 
-        // Gửi request để lấy biển số theo tỉnh thành đã chọn
         function getPlateNumber() {
             const city = document.getElementById('city-select').value;
             if (!city) {
